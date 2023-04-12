@@ -31,6 +31,8 @@ import {
   Container
 } from "reactstrap";
 
+import Logo from '../../assets/logo.png';
+
 function IndexNavbar() {
   const [navbarColor, setNavbarColor] = React.useState("navbar-transparent");
   const [navbarCollapse, setNavbarCollapse] = React.useState(false);
@@ -71,7 +73,7 @@ function IndexNavbar() {
             target="_blank"
             title="Coded by Creative Tim"
           >
-            Paper Kit React
+            <img src={Logo} width={120} />
           </NavbarBrand>
           <button
             aria-expanded={navbarCollapse}
