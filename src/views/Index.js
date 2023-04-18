@@ -24,6 +24,7 @@ import React from "react";
 import IndexNavbar from "components/Navbars/IndexNavbar.js";
 import IndexHeader from "components/Headers/IndexHeader.js";
 import DemoFooter from "components/Footers/DemoFooter.js";
+import SimpleMap from "components/Maps";
 
 // index sections
 import SectionButtons from "views/index-sections/SectionButtons.js";
@@ -51,8 +52,10 @@ function Index() {
   return (
     <>
       <IndexNavbar />
-      <IndexHeader />
+      <SimpleMap />
       <div className="main">
+        
+
         {/* <SectionButtons />
         <SectionNavbars />
         <SectionNavigation />
