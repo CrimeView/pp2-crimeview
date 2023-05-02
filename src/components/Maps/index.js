@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import GoogleMapReact from 'google-map-react';
+import SectionLogin from "views/index-sections/SectionLogin.js";
+
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
 export default function SimpleMap(){
+
+  const [logado, setLogado] = useState(false);
+
   const [latitude, setLatitude] = useState();
   const [longitude, setLongitude] = useState();
 
@@ -38,7 +43,7 @@ export default function SimpleMap(){
 
   return (
     // Important! Always set the container height explicitly
-    <div style={{ height: '100vh', width: '100%' }}>   
+    <div style={{ height: '100vh', width: '100%',  position: "relative" }}>
       <GoogleMapReact
         bootstrapURLKeys={{ key: "AIzaSyDcFwwj4jzI2nZSOH1CGtgwRSDsdlM_HXU" }}
         defaultCenter={defaultProps.center}
