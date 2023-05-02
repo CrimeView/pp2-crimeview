@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 
 // reactstrap components
 
@@ -41,6 +41,7 @@ import SectionLogin from "views/index-sections/SectionLogin.js";
 import SectionExamples from "views/index-sections/SectionExamples.js";
 import SectionDownload from "views/index-sections/SectionDownload.js";
 
+
 function Index() {
   document.documentElement.classList.remove("nav-open");
   React.useEffect(() => {
@@ -49,9 +50,13 @@ function Index() {
       document.body.classList.remove("index");
     };
   });
+
+  const [logado, setLogado] = useState();
+
   return (
     <>
       <IndexNavbar />
+      <SectionLogin/>
       <SimpleMap />
       <div className="main">
         

@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 
 // reactstrap components
 import {
@@ -35,19 +35,24 @@ import {
 // core components
 
 function SectionLogin() {
+
+  const [logado, setLogado] = useState("block")
+
+  function logar(){
+    setLogado("none");
+  }
+  
   return (
     <>
       <div
         className="section section-image section-login"
-        style={{
-          backgroundImage: "url(" + require("assets/img/login-image.jpg") + ")"
-        }}
+        style={{display: `${logado}`}}
       >
         <Container>
           <Row>
             <Col className="mx-auto" lg="4" md="6">
               <Card className="card-register">
-                <h3 className="title mx-auto">Welcome</h3>
+                <h3 className="title mx-auto" style={{color: "#B33C12"}}>Bem-vindo(a)</h3>
                 <div className="social-line text-center">
                   <Button
                     className="btn-neutral btn-just-icon mt-0"
@@ -75,31 +80,32 @@ function SectionLogin() {
                   </Button>
                 </div>
                 <Form className="register-form">
-                  <label>Email</label>
+                  <label>E-mail</label>
                   <InputGroup className="form-group-no-border">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
                         <i className="nc-icon nc-email-85" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" />
+                    <Input placeholder="E-mail" type="email" />
                   </InputGroup>
-                  <label>Password</label>
+                  <label>Senha</label>
                   <InputGroup className="form-group-no-border">
                     <InputGroupAddon addonType="prepend">
                       <InputGroupText>
                         <i className="nc-icon nc-key-25" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" />
+                    <Input placeholder="Senha" type="password" />
                   </InputGroup>
                   <Button
                     block
                     className="btn-round"
                     color="danger"
                     type="button"
+                    onClick={() => logar()}
                   >
-                    Register
+                    Entrar
                   </Button>
                 </Form>
                 <div className="forgot">
@@ -109,22 +115,11 @@ function SectionLogin() {
                     href="#pablo"
                     onClick={(e) => e.preventDefault()}
                   >
-                    Forgot password?
+                    Esqueceu sua senha?
                   </Button>
                 </div>
               </Card>
-              <div className="col text-center">
-                <Button
-                  className="btn-round"
-                  outline
-                  color="neutral"
-                  href="/register-page"
-                  size="lg"
-                  target="_blank"
-                >
-                  View Register Page
-                </Button>
-              </div>
+              
             </Col>
           </Row>
         </Container>
