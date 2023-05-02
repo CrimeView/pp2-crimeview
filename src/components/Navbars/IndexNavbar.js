@@ -97,7 +97,7 @@ function IndexNavbar() {
             <NavItem>
               <NavLink
                 data-placement="bottom"
-                href="https://www.instagram.com/CreativeTimOfficial?ref=creativetim"
+                href="https://instagram.com/crimeviewbr?igshid=YmMyMTA2M2Y="
                 target="_blank"
                 title="Follow us on Instagram"
               >
