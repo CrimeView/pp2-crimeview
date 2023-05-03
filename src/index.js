@@ -60,7 +60,7 @@ root.render(
         render={(props) => <ProfilePage {...props} />}
       />
       <Route
-        path="/Listagem"
+        path="/usuarios"
         render={(props) => <Listagem {...props} />}
       />
       <Route

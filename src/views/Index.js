@@ -59,8 +59,6 @@ function Index() {
       <SectionLogin/>
       <SimpleMap />
       <div className="main">
-        
-
         {/* <SectionButtons />
         <SectionNavbars />
         <SectionNavigation />
