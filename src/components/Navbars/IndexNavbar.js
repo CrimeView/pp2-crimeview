@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 // nodejs library that concatenates strings
 import classnames from "classnames";
 // reactstrap components
@@ -31,11 +31,20 @@ import {
   Container
 } from "reactstrap";
 
+
+
 import Logo from '../../assets/logo.png';
+
+import NavAdmin from "components/NavAdmin";
+import NavUser from "components/NavUser";
+
 
 function IndexNavbar() {
   const [navbarColor, setNavbarColor] = React.useState("");
   const [navbarCollapse, setNavbarCollapse] = React.useState(false);
+
+  const [user, setUser] = useState("2");
+
 
   const toggleNavbarCollapse = () => {
     setNavbarCollapse(!navbarCollapse);
@@ -65,7 +74,7 @@ function IndexNavbar() {
   });
   return (
     <Navbar className={classnames("fixed-top", navbarColor)} expand="lg">
-      <Container>
+      
         <div className="navbar-translate">
           <NavbarBrand
             data-placement="bottom"
@@ -93,6 +102,30 @@ function IndexNavbar() {
           isOpen={navbarCollapse}
         >
           <Nav navbar>
+
+          <NavItem>
+              <NavLink
+                href="/"
+              >
+
+                <i title="Home" class="fa fa-home" aria-hidden="true"></i>
+                Home
+              </NavLink>
+            </NavItem>
+
+            {user === "1" ? 
+            
+            <NavAdmin />
+            : ""
+          
+          }
+
+            {user === "2" ? 
+            <NavUser />
+            : ""
+          }
+            
+            
            
             <NavItem>
               <NavLink
@@ -124,10 +157,12 @@ function IndexNavbar() {
                 <i className="nc-icon nc-book-bookmark" /> Conheça o projeto
               </NavLink>
             </NavItem>
+
+            
             
           </Nav>
         </Collapse>
-      </Container>
+      
     </Navbar>
   );
 }
