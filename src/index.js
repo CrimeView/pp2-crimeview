@@ -30,6 +30,7 @@ import HistoricoReport from "views/historico/HistoricoReport.js";
 import LandingPage from "views/examples/LandingPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RegisterPage from "views/examples/RegisterPage.js";
+import Listagem from "views/Listagem/Listagem.js";
 // others
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -49,6 +50,10 @@ root.render(
       <Route
         path="/profile-page"
         render={(props) => <ProfilePage {...props} />}
+      />
+      <Route
+        path="/Listagem"
+        render={(props) => <Listagem {...props} />}
       />
       <Route
         path="/register-page"
