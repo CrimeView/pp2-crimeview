@@ -30,6 +30,7 @@ import HistoricoReport from "views/historico/HistoricoReport.js";
 import LandingPage from "views/examples/LandingPage.js";
 import ProfilePage from "views/examples/ProfilePage.js";
 import RegisterPage from "views/examples/RegisterPage.js";
+import SectionDadosCadastrado from "views/dados/Dados";
 // others
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -42,6 +43,13 @@ root.render(
         path="/historico"
         render={(props) => <HistoricoReport {...props} />}
       />
+
+      <Route path="/index" render={(props) => <Index {...props} />} />
+      <Route
+        path="/dados"
+        render={(props) => <SectionDadosCadastrado {...props} />}
+      />
+
       <Route
         path="/landing-page"
         render={(props) => <LandingPage {...props} />}
