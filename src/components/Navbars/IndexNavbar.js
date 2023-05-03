@@ -43,7 +43,7 @@ function IndexNavbar() {
   const [navbarColor, setNavbarColor] = React.useState("");
   const [navbarCollapse, setNavbarCollapse] = React.useState(false);
 
-  const [user, setUser] = useState("2");
+  const [user, setUser] = useState("1");
 
 
   const toggleNavbarCollapse = () => {
