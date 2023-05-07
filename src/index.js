@@ -32,6 +32,7 @@ import ProfilePage from "views/examples/ProfilePage.js";
 import RegisterPage from "views/examples/RegisterPage.js";
 import Listagem from "views/Listagem/Listagem.js";
 import SectionDadosCadastrado from "views/dados/Dados";
+import ConfigConta from "views/ConfigurarConta/ConfigurarConta";
 // others
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -51,6 +52,16 @@ root.render(
         render={(props) => <SectionDadosCadastrado {...props} />}
       />
 
+
+
+<Route path="/index" render={(props) => <Index {...props} />} />
+      <Route
+        path="/configurar"
+        render={(props) => <ConfigConta {...props} />}
+      />
+
+
+
       <Route
         path="/landing-page"
         render={(props) => <LandingPage {...props} />}
@@ -67,6 +78,7 @@ root.render(
         path="/register-page"
         render={(props) => <RegisterPage {...props} />}
       />
+      
       <Redirect to="/index" />
     </Switch>
   </BrowserRouter>
