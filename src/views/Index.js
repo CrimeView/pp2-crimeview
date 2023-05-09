@@ -18,6 +18,7 @@
 */
 import React, { useState } from "react";
 
+
 // reactstrap components
 
 // core components
@@ -40,6 +41,7 @@ import SectionDark from "views/index-sections/SectionDark.js";
 import SectionLogin from "views/index-sections/SectionLogin.js";
 import SectionExamples from "views/index-sections/SectionExamples.js";
 import SectionDownload from "views/index-sections/SectionDownload.js";
+import ReportarCrime from "./ReportarCrime";
 
 
 function Index() {
@@ -54,10 +56,12 @@ function Index() {
   const [logado, setLogado] = useState();
 
   return (
+    
     <>
       <IndexNavbar />
       <SectionLogin/>
       <SimpleMap />
+     
       <div className="main">
         {/* <SectionButtons />
         <SectionNavbars />
@@ -73,6 +77,7 @@ function Index() {
         <SectionExamples />
         <SectionDownload /> */}
         <DemoFooter />
+        <ReportarCrime />
       </div>
     </>
   );
