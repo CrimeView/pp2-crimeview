@@ -17,6 +17,8 @@
 
 */
 import React, { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 
 // reactstrap components
@@ -58,6 +60,7 @@ function Index() {
   return (
     
     <>
+      <ToastContainer autoClose={3000} />
       <IndexNavbar />
       <SectionLogin/>
       <SimpleMap />
