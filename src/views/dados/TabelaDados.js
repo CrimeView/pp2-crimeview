@@ -18,21 +18,44 @@
 */
 
 // reactstrap components
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Col, Container, Row, Table } from "reactstrap";
 
 // core components
 
 function SectionTabelaDados() {
+
+  const [dados, setDados] = useState([]);
+
+  async function buscarDados() {
+
+    const api = `http://localhost:8080/api/dados`;
+
+    axios.get(api)
+    .then(response => {
+      console.log(response.data);
+      setDados(response.data)
+    }).catch(error => {
+      console.log(error);
+    })
+    
+  }
+
+  useEffect(() => {
+    buscarDados();
+  }, [])
+
   return (
     <>
       <br></br>
       <br></br>,
       <div className="section">
-       
+
         <Container>
           <Row>
             <Col className="ml-auto mr-auto text-center" md="8">
-              
+
               <h3>GERENCIAMENTO DE DADOS</h3>
               <Table>
                 <thead>
@@ -40,48 +63,24 @@ function SectionTabelaDados() {
                     <th>#</th>
                     <th>Município</th>
                     <th>Região Geográfica</th>
-                    <th>Sexo</th>
                     <th>Natureza Jurídica</th>
                     <th>Data</th>
-                    <th>Ano</th>
-                    <th>Idade</th>
                     <th>Total de Vítimas</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Jaboatão dos Guararapes</td>
-                    <td>Região Metropolitana</td>
-                    <td>Masculino</td>
-                    <td>Homicídio</td>
-                    <td>01/01/2004</td>
-                    <td>2004</td>
-                    <td>24</td>
-                    <td>1</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td>Recife</td>
-                    <td>Região Metropolitana</td>
-                    <td>Masculino</td>
-                    <td>Homicídio</td>
-                    <td>01/01/2008</td>
-                    <td>2008</td>
-                    <td>44</td>
-                    <td>1</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td>Caruaru</td>
-                    <td>Agreste</td>
-                    <td>Feminino</td>
-                    <td>Lesão Corporal por Violencia Doméstica/Familiar</td>
-                    <td>01/01/2020</td>
-                    <td>2020</td>
-                    <td>27</td>
-                    <td>1</td>
-                  </tr>
+                  {dados.map(dado => {
+                    return(
+                    <tr key={dado.id}>
+                      <td>{dado.id}</td>
+                      <td>{dado.municipio}</td>
+                      <td>{dado.regiao}</td>
+                      <td>{dado.natureza}</td>
+                      <td>{dado.data}</td>
+                      <td>{dado.vitima}</td>
+                    </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </Col>
