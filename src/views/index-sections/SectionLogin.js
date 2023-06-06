@@ -16,9 +16,9 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {auth} from '../../FirebaseConnection';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { toast } from "react-toastify";
 
 // reactstrap components
@@ -39,7 +39,7 @@ import {
 
 function SectionLogin() {
 
-  const [userData, setUserData] = useState({})
+  const userData = JSON.parse(localStorage.getItem("userData"));
 
   const [logado, setLogado] = useState("block");
 
@@ -52,9 +52,10 @@ function SectionLogin() {
       toast.success("Você foi logado com sucesso!")
       setEmail("");
       setPasswd("");
-
+      localStorage.setItem("userData", JSON.stringify(data));
       setTimeout(() => {
         setLogado("none");
+        window.location.reload();
       },3010);
       
     }).catch(error => {
@@ -69,6 +70,7 @@ function SectionLogin() {
       toast.success("Conta criada com sucesso!");
       setEmail("");
       setPasswd("");
+      localStorage.setItem("userData", JSON.stringify(res));
     }).catch(error => {
       if(error.code === "auth/email-already-in-use"){
         toast.error("Usuário já cadastrado!")
@@ -79,6 +81,21 @@ function SectionLogin() {
       }
     })
   }
+
+  useEffect(() => {
+    async function checkLogin(){
+      onAuthStateChanged(auth, (user) => {
+        if(user){
+          setLogado("none");
+          localStorage.setItem("userData", JSON.stringify(user));
+        } else{
+          setLogado("block");
+        }
+      })
+    }
+
+    checkLogin()
+  })
 
   return (
     <>

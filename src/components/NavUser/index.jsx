@@ -5,7 +5,7 @@ import { NavItem, NavLink } from "reactstrap";
 export default function NavUser() {
 
     return (
-        <>
+        <>  
             <NavItem>
                 <NavLink
                     href="/report"
