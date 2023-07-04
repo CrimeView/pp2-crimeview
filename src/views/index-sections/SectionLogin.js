@@ -16,23 +16,23 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useEffect, useState } from "react";
-import {auth} from '../../FirebaseConnection';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { auth } from '../../FirebaseConnection';
 
 // reactstrap components
 import {
   Button,
   Card,
+  Col,
+  Container,
   Form,
   Input,
+  InputGroup,
   InputGroupAddon,
   InputGroupText,
-  InputGroup,
-  Container,
-  Row,
-  Col
+  Row
 } from "reactstrap";
 
 // core components
@@ -49,7 +49,6 @@ function SectionLogin() {
   async function logar() {
     await signInWithEmailAndPassword(auth, email,passwd)
     .then(data => {
-      toast.success("Você foi logado com sucesso!")
       setEmail("");
       setPasswd("");
       localStorage.setItem("userData", JSON.stringify(data));
