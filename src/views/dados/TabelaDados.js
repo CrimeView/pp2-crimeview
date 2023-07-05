@@ -21,68 +21,160 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Col, Container, Row, Table } from "reactstrap";
-
-// core components
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+import moment from 'moment';
+import { toast } from "react-toastify";
 
 function SectionTabelaDados() {
-
   const [dados, setDados] = useState([]);
+  const [dadosReport, setDadosReport] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const registrosPorPagina = 10;
+  const [selectedDataSource, setSelectedDataSource] = useState('dados'); // Fonte de dados selecionada ('dados' ou 'dadosReport')
 
   async function buscarDados() {
+    const api = `http://localhost:8080/api/`;
 
-    const api = `http://localhost:8080/api/dados`;
+    await axios.get(api + "dados")
+      .then(response => {
+        console.log(response.data);
+        setDados(response.data);
+        setLoading(false);
+      }).catch(error => {
+        console.log(error);
+      })
 
-    axios.get(api)
-    .then(response => {
-      console.log(response.data);
-      setDados(response.data)
-    }).catch(error => {
-      console.log(error);
-    })
-    
+    await axios.get(api + "dadosReport")
+      .then(response => {
+        console.log(response.data);
+        setDadosReport(response.data);
+        setLoading(false);
+      }).catch(error => {
+        console.log(error);
+      })
   }
+
 
   useEffect(() => {
     buscarDados();
   }, [])
 
+  const indiceUltimoRegistro = paginaAtual * registrosPorPagina;
+  const indicePrimeiroRegistro = indiceUltimoRegistro - registrosPorPagina;
+  const registrosPaginaAtual = selectedDataSource === 'dados' ? dados.slice(indicePrimeiroRegistro, indiceUltimoRegistro) : dadosReport.slice(indicePrimeiroRegistro, indiceUltimoRegistro);
+
+  function alterarPagina(numeroPagina) {
+    setPaginaAtual(numeroPagina);
+  }
+
+  function generatePDF() {
+    const doc = new jsPDF();
+
+    const tableData = registrosPaginaAtual.map(item => [item.id, item.municipio, item.regiao, item.natureza, item.data, item.vitima]);
+
+    doc.autoTable({
+      head: [['#', 'Município', 'Região', 'Natureza', 'Data', 'vitimas']],
+      body: tableData
+    })
+
+    doc.save('dados.pdf');
+  }
+
+  function handleChangeDataSource(event) {
+    setSelectedDataSource(event.target.value);
+  }
+
+  async function deleteRegistro(id){
+    const api = selectedDataSource === 'dados' ? `http://localhost:8080/api/dados/${id}` : `http://localhost:8080/api/dadosReport/${id}`;
+
+    const confirmacao = window.confirm("Tem certeza que deseja excluir?");
+    if (confirmacao) {
+      try {
+        const response = await axios.delete(api);
+        toast.success("Crime reportado com sucesso!");
+        buscarDados();
+      } catch (error) {
+        toast.error("Ocorreu um erro ao excluir o registro.");
+      }
+    }
+  }
+
   return (
     <>
-      <br></br>
-      <br></br>,
+      <br />
+      <br />
       <div className="section">
-
         <Container>
           <Row>
             <Col className="ml-auto mr-auto text-center" md="8">
-
               <h3>GERENCIAMENTO DE DADOS</h3>
-              <Table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Município</th>
-                    <th>Região Geográfica</th>
-                    <th>Natureza Jurídica</th>
-                    <th>Data</th>
-                    <th>Total de Vítimas</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {dados.map(dado => {
-                    return(
-                    <tr key={dado.id}>
-                      <td>{dado.id}</td>
-                      <td>{dado.municipio}</td>
-                      <td>{dado.regiao}</td>
-                      <td>{dado.natureza}</td>
-                      <td>{dado.data}</td>
-                      <td>{dado.vitima}</td>
-                    </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
+              {loading ? (
+                <p>Carregando dados...</p>
+              ) : (
+                <>
+                  <div>
+                    <label htmlFor="dataSourceSelect">Selecione a fonte de dados:</label><br />
+                    <select id="dataSourceSelect" value={selectedDataSource} onChange={handleChangeDataSource}>
+                      <option value="dados">Dados</option>
+                      <option value="dadosReport">Dados Report</option>
+                    </select>
+                  </div><br />
+                  <button className="btn" onClick={generatePDF}>Exportar PDF</button>
+                  <br />
+                  <br />
+                </>
+              )}
+                  <Table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Município</th>
+                        <th>Região Geográfica</th>
+                        <th>Natureza Jurídica</th>
+                        <th>Data</th>
+                        <th>Total de Vítimas</th>
+                        <th>Ação</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {registrosPaginaAtual.map(dado => {
+                        const dataFormat = `${dado.data[0]}-${dado.data[1]}-${dado.data[2]}`
+                        return (
+                          <tr key={dado.id}>
+                            <td style={{ fontWeight: 500 }}>{dado.id}</td>
+                            <td style={{ fontWeight: 500 }}>{dado.municipio}</td>
+                            <td style={{ fontWeight: 500 }}>{dado.regiao}</td>
+                            <td style={{ fontWeight: 500 }}>{dado.natureza}</td>
+                            <td style={{ fontWeight: 500 }}>{moment(dataFormat).format('DD/MM/YYYY')}</td>
+                            <td style={{ fontWeight: 500 }}>{dado.vitima}</td>
+                            <td style={{ fontWeight: 500 }}><button className="btn btn-danger" onClick={() => deleteRegistro(dado.id)}>Excluir</button></td>
+
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </Table>
+
+                  <div className="pagination">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => alterarPagina(paginaAtual - 1)}
+                      disabled={paginaAtual === 1}
+                      style={{ marginRight: 10 }}
+                    >
+                      Anterior
+                    </button>
+
+                    <button
+                      className="btn btn-primary"
+                      onClick={() => alterarPagina(paginaAtual + 1)}
+                      disabled={indiceUltimoRegistro >= (selectedDataSource === 'dados' ? dados.length : dadosReport.length)}
+                    >
+                      Próxima
+                    </button>
+                  </div>
             </Col>
           </Row>
         </Container>

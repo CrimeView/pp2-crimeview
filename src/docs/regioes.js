@@ -1,3 +1,3 @@
-const regioesPE = ['Agreste Pernambucano', 'Mata Pernambucana', 'Sertão Pernambucano', 'Região Metropolitana do Recife'];
+const regioesPE = ['Agreste', 'Zona da Mata', 'Sertão', 'Região Metropolitana', 'Capital'];
 
 export default regioesPE;

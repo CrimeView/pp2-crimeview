@@ -18,9 +18,6 @@ export default function ReportarCrime(props) {
 
   const toggle = () => setModal(!modal);
 
-  const dataAtual = new Date();
-  const dataFormatada = dataAtual.toISOString();
-
   useEffect(() => {
     const verificarUser = localStorage.getItem("userData");
     console.log(verificarUser)
@@ -36,16 +33,17 @@ export default function ReportarCrime(props) {
   }, []);
 
   function reportarCrime() {
-    const api = `http://localhost:8080/api/dados`
+    const api = `http://localhost:8080/api/dadosReport`
     const data = {
       regiao: regiao,
       natureza: natureza,
-      data: dataFormatada,
       municipio: municipio,
       vitima: vitimas,
-      status_dado: true,
+      statusDado: true,
       id_usuario: 1
     }
+
+    console.log(data);
 
     axios.post(api, data)
       .then(response => {
