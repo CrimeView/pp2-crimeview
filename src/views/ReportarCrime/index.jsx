@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Input } from 'reactstrap';
 import axios from 'axios';
-import cidades from '../../docs/cidades';
 import regioesPE from "docs/regioes";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Button, Input, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import cidades from '../../docs/cidades';
 
 export default function ReportarCrime(props) {
 
@@ -17,10 +17,11 @@ export default function ReportarCrime(props) {
   const [vitimas, setVitimas] = useState("");
 
   const toggle = () => setModal(!modal);
+  const verificarUser = localStorage.getItem("userData");
+  const uidUser = JSON.parse(verificarUser);
 
   useEffect(() => {
-    const verificarUser = localStorage.getItem("userData");
-    console.log(verificarUser)
+    
 
     if(verificarUser != "null"){
       setUserData(true);
@@ -40,7 +41,8 @@ export default function ReportarCrime(props) {
       municipio: municipio,
       vitima: vitimas,
       statusDado: true,
-      id_usuario: 1
+      id_usuario: uidUser.uid
+      
     }
 
     console.log(data);
