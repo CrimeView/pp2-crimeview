@@ -6,14 +6,6 @@ export default function NavUser() {
 
     return (
         <>  
-            <NavItem>
-                <NavLink
-                    href="/report"
-                >
-                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                    <p>Reportar Crime</p>
-                </NavLink>
-            </NavItem>
 
             <NavItem>
                 <NavLink
