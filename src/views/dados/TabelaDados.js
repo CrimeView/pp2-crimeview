@@ -20,6 +20,7 @@
 // reactstrap components
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Chart } from "chart.js";
 import { Col, Container, Row, Table } from "reactstrap";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -33,6 +34,8 @@ function SectionTabelaDados() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const registrosPorPagina = 10;
   const [selectedDataSource, setSelectedDataSource] = useState('dados'); // Fonte de dados selecionada ('dados' ou 'dadosReport')
+  const [filtroMunicipio, setFiltroMunicipio] = useState('');
+ 
 
   async function buscarDados() {
     const api = `http://localhost:8080/api/`;
@@ -101,6 +104,78 @@ function SectionTabelaDados() {
     }
   }
 
+  function gerarGrafico() {
+    const municipios = {};
+    dados.forEach(item => {
+      const municipio = item.municipio;
+      const vitimas = item.vitima;
+
+      if (!municipios[municipio]) {
+        municipios[municipio] = vitimas;
+      } else {
+        municipios[municipio] += vitimas;
+      }
+    });
+
+    const municipiosSorted = Object.keys(municipios).sort((a, b) => municipios[b] - municipios[a]);
+    const topMunicipios = municipiosSorted.slice(0, 5);
+
+    const labels = topMunicipios;
+    const data = topMunicipios.map(municipio => municipios[municipio]);
+
+    const chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: "Vítimas",
+          data: data,
+          backgroundColor: "rgba(54, 162, 235, 0.5)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    const chartOptions = {
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+
+    const chart = new Chart("chartCanvas", {
+      type: "bar",
+      data: chartData,
+      options: chartOptions,
+    });
+
+    const newTab = window.open();
+    newTab.document.body.innerHTML = `
+      <h3>Municípios com Mais Vítimas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Município</th>
+            <th>Vítimas</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${topMunicipios.map(municipio => `
+            <tr>
+              <td>${municipio}</td>
+              <td>${municipios[municipio]}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      <canvas id="chartCanvas" width="400" height="400"></canvas>
+    `;
+
+    chart.render();
+    newTab.document.getElementById("chartCanvas").outerHTML = chart.toBase64Image();
+  }
+
   return (
     <>
       <br />
@@ -121,7 +196,10 @@ function SectionTabelaDados() {
                       <option value="dadosReport">Dados Report</option>
                     </select>
                   </div><br />
+                  
+                  <button className="btn" onClick={gerarGrafico}>Gerar Gráfico</button>
                   <button className="btn" onClick={generatePDF}>Exportar PDF</button>
+                  
                   <br />
                   <br />
                 </>
