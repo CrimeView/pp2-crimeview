@@ -20,12 +20,13 @@
 // reactstrap components
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Chart } from "chart.js";
 import { Col, Container, Row, Table } from "reactstrap";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
 import { toast } from "react-toastify";
+//import { Bar } from "react-chartjs-2";
+import 'chart.js/auto';
 
 function SectionTabelaDados() {
   const [dados, setDados] = useState([]);
@@ -34,8 +35,35 @@ function SectionTabelaDados() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const registrosPorPagina = 10;
   const [selectedDataSource, setSelectedDataSource] = useState('dados'); // Fonte de dados selecionada ('dados' ou 'dadosReport')
-  const [filtroMunicipio, setFiltroMunicipio] = useState('');
- 
+  const [chartData, setChartData] = useState({});
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Número de Vítimas'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Data'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      },
+      title: {
+        display: true,
+        text: 'Gráfico de Vítimas por Data'
+      }
+    },
+    filterMunicipios: true
+  };
 
   async function buscarDados() {
     const api = `http://localhost:8080/api/`;
@@ -104,77 +132,85 @@ function SectionTabelaDados() {
     }
   }
 
-  function gerarGrafico() {
-    const municipios = {};
-    dados.forEach(item => {
-      const municipio = item.municipio;
-      const vitimas = item.vitima;
-
-      if (!municipios[municipio]) {
-        municipios[municipio] = vitimas;
-      } else {
-        municipios[municipio] += vitimas;
+  
+  
+    //Gerar o gráfico
+    async function gerarGrafico() {
+      try {
+        const api = `http://localhost:8080/api/dados`; // Defina a URL correta da API
+  
+        const response = await axios.get(api);
+        const dados = response.data;
+  
+        // Filtrar e ordenar os municípios com mais vítimas
+        const municipiosOrdenados = dados
+          .sort((a, b) => b.vitima - a.vitima)
+          .slice(0, 5) // Altere para exibir o número desejado de municípios com mais vítimas
+          .map(dado => dado.municipio);
+  
+        // Filtrar os dados dos municípios selecionados
+        const dadosFiltrados = dados.filter(dado => municipiosOrdenados.includes(dado.municipio));
+  
+        // Criar os datasets para o gráfico
+        const datasets = municipiosOrdenados.map(municipio => {
+          const vitimasPorMunicipio = dadosFiltrados
+            .filter(dado => dado.municipio === municipio)
+            .map(dado => dado.vitima);
+  
+          return {
+            label: municipio,
+            data: vitimasPorMunicipio,
+            fill: false,
+            borderColor: getRandomColor(), // Crie uma função para gerar cores aleatórias
+          };
+        });
+  
+        const chartData = {
+          labels: dadosFiltrados.map(dado => dado.data), // Suponho que você tenha um campo de data nos dados
+          datasets: datasets,
+        };
+  
+        setChartData(chartData);
+          // Abrir gráfico em uma nova aba
+      const chartWindow = window.open("", "_blank");
+      if (chartWindow) {
+        chartWindow.document.write(`
+          <html>
+            <head>
+              <title>Gráfico de Vítimas por Data</title>
+              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            </head>
+            <body>
+              <canvas id="chartCanvas"></canvas>
+              <script>
+                const ctx = document.getElementById('chartCanvas').getContext('2d');
+                new Chart(ctx, {
+                  type: 'line',
+                  data: ${JSON.stringify(chartData)},
+                  options: ${JSON.stringify(options)}
+                });
+              </script>
+            </body>
+          </html>
+        `);
+        chartWindow.document.close();
       }
-    });
+      } catch (error) {
+        console.error("Erro ao buscar os dados do gráfico:", error);
+      }
+      
+    }
 
-    const municipiosSorted = Object.keys(municipios).sort((a, b) => municipios[b] - municipios[a]);
-    const topMunicipios = municipiosSorted.slice(0, 5);
+ const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
 
-    const labels = topMunicipios;
-    const data = topMunicipios.map(municipio => municipios[municipio]);
 
-    const chartData = {
-      labels: labels,
-      datasets: [
-        {
-          label: "Vítimas",
-          data: data,
-          backgroundColor: "rgba(54, 162, 235, 0.5)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1,
-        },
-      ],
-    };
-
-    const chartOptions = {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    };
-
-    const chart = new Chart("chartCanvas", {
-      type: "bar",
-      data: chartData,
-      options: chartOptions,
-    });
-
-    const newTab = window.open();
-    newTab.document.body.innerHTML = `
-      <h3>Municípios com Mais Vítimas</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Município</th>
-            <th>Vítimas</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${topMunicipios.map(municipio => `
-            <tr>
-              <td>${municipio}</td>
-              <td>${municipios[municipio]}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-      <canvas id="chartCanvas" width="400" height="400"></canvas>
-    `;
-
-    chart.render();
-    newTab.document.getElementById("chartCanvas").outerHTML = chart.toBase64Image();
-  }
 
   return (
     <>
@@ -196,9 +232,18 @@ function SectionTabelaDados() {
                       <option value="dadosReport">Dados Report</option>
                     </select>
                   </div><br />
+                
                   
-                  <button className="btn" onClick={gerarGrafico}>Gerar Gráfico</button>
+                
                   <button className="btn" onClick={generatePDF}>Exportar PDF</button>
+                  <button className="btn" onClick={gerarGrafico}>
+                    Gerar Gráfico
+                  </button>
+
+                  {/*{Object.keys(chartData).length > 0 && (
+                    <Bar data={chartData} options={options}
+                     />
+                  )}*/}
                   
                   <br />
                   <br />
@@ -259,6 +304,6 @@ function SectionTabelaDados() {
       </div>
     </>
   );
-}
+                    }
 
 export default SectionTabelaDados;
