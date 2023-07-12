@@ -139,7 +139,7 @@ function SectionTabelaDados() {
     //Gerar o gráfico
     async function gerarGrafico() {
       try {
-        const api = `http://localhost:8080/api/dados`; 
+        const api = `http://localhost:8080/api/dadosReport`; 
   
         const response = await axios.get(api);
         const dados = response.data;
@@ -147,26 +147,39 @@ function SectionTabelaDados() {
         // Filtrar e ordenar os municípios com mais vítimas
         const municipiosOrdenados = dados
           .sort((a, b) => b.vitima - a.vitima)
-          .slice(0, 3) // Altere para exibir o número desejado de municípios com mais vítimas
+          .slice(0, 5) // Altere para exibir o número desejado de municípios com mais vítimas
           .map(dado => dado.municipio);
   
         // Filtrar os dados dos municípios selecionados
         const dadosFiltrados = dados.filter(dado => municipiosOrdenados.includes(dado.municipio));
-  
+
+        //cores
+        const cores = [
+          "rgba(255, 0, 0, 0.5)",    // Vermelho claro
+          "rgba(0, 255, 0, 0.5)",    // Verde claro
+          "rgba(0, 0, 255, 0.5)",    // Azul claro
+          "rgba(255, 255, 0, 0.5)",  // Amarelo claro
+          "rgba(128, 0, 128, 0.5)"   // Roxo claro
+        ];
+
+
         // Criar os datasets para o gráfico
-        const datasets = municipiosOrdenados.map(municipio => {
-          const vitimasPorMunicipio = dadosFiltrados
-            .filter(dado => dado.municipio === municipio)
-            .map(dado => dado.vitima);
-  
-          return {
-            label: municipio,
-            data: vitimasPorMunicipio,
-            fill: false,
-            borderColor: getRandomColor(), 
-          };
+        const datasets = [];
+        for (let i = 0; i < municipiosOrdenados.length; i++) {
+        const municipio = municipiosOrdenados[i];
+        const vitimasPorMunicipio = dadosFiltrados
+          .filter(dado => dado.municipio === municipio)
+          .map(dado => dado.vitima);
+
+        datasets.push({
+          label: municipio,
+          data: vitimasPorMunicipio,
+          fill: false,
+          borderColor: cores[i % cores.length], 
+          backgroundColor: cores[i % cores.length]// Seleciona uma cor da lista de cores fixas
         });
-  
+      }
+
         const chartData = {
           labels: dadosFiltrados.map(dado => dado.data), 
           datasets: datasets,
@@ -187,7 +200,7 @@ function SectionTabelaDados() {
               <script>
                 const ctx = document.getElementById('chartCanvas').getContext('2d');
                 new Chart(ctx, {
-                  type: 'line',
+                  type: 'bar',
                   data: ${JSON.stringify(chartData)},
                   options: ${JSON.stringify(options)}
                 });
@@ -203,6 +216,9 @@ function SectionTabelaDados() {
       
     }
 
+    
+
+    {/*//gerar uma cor aleatória a cada chamada
  const getRandomColor = () => {
     const letters = "0123456789ABCDEF";
     let color = "#";
@@ -211,7 +227,7 @@ function SectionTabelaDados() {
     }
     return color;
   };
-
+*/}
 
 
   return (
