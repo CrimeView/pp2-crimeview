@@ -25,7 +25,6 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
 import { toast } from "react-toastify";
-//import { Bar } from "react-chartjs-2";
 import 'chart.js/auto';
 
 function SectionTabelaDados() {
@@ -59,7 +58,9 @@ function SectionTabelaDados() {
       },
       title: {
         display: true,
-        text: 'Gráfico de Vítimas por Data'
+        text: 'Municípios com mais vítimas',
+        font: {
+          size: 18}
       }
     },
     filterMunicipios: true
@@ -134,10 +135,11 @@ function SectionTabelaDados() {
 
   
   
+   
     //Gerar o gráfico
     async function gerarGrafico() {
       try {
-        const api = `http://localhost:8080/api/dados`; // Defina a URL correta da API
+        const api = `http://localhost:8080/api/dados`; 
   
         const response = await axios.get(api);
         const dados = response.data;
@@ -145,7 +147,7 @@ function SectionTabelaDados() {
         // Filtrar e ordenar os municípios com mais vítimas
         const municipiosOrdenados = dados
           .sort((a, b) => b.vitima - a.vitima)
-          .slice(0, 5) // Altere para exibir o número desejado de municípios com mais vítimas
+          .slice(0, 3) // Altere para exibir o número desejado de municípios com mais vítimas
           .map(dado => dado.municipio);
   
         // Filtrar os dados dos municípios selecionados
@@ -161,17 +163,17 @@ function SectionTabelaDados() {
             label: municipio,
             data: vitimasPorMunicipio,
             fill: false,
-            borderColor: getRandomColor(), // Crie uma função para gerar cores aleatórias
+            borderColor: getRandomColor(), 
           };
         });
   
         const chartData = {
-          labels: dadosFiltrados.map(dado => dado.data), // Suponho que você tenha um campo de data nos dados
+          labels: dadosFiltrados.map(dado => dado.data), 
           datasets: datasets,
         };
   
-        setChartData(chartData);
-          // Abrir gráfico em uma nova aba
+      setChartData(chartData);
+          
       const chartWindow = window.open("", "_blank");
       if (chartWindow) {
         chartWindow.document.write(`
