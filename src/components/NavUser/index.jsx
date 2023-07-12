@@ -1,11 +1,21 @@
 import React from "react";
 
 import { NavItem, NavLink } from "reactstrap";
+import { signOut } from 'firebase/auth';
+import { auth } from '../../FirebaseConnection';
 
 export default function NavUser() {
 
+    const userData = JSON.parse(localStorage.getItem("userData"));
+
+    async function logout() {
+        signOut(auth);
+        localStorage.clear();
+        window.location.reload();
+    }
+
     return (
-        <>  
+        <>
 
             <NavItem>
                 <NavLink
@@ -24,6 +34,19 @@ export default function NavUser() {
                     Configurar Conta
                 </NavLink>
             </NavItem>
+
+            {userData &&
+                <NavItem>
+                    <NavLink
+                        href="#"
+                        onClick={() => logout()}
+                    >
+                        <i class="fa fa-users" aria-hidden="true"></i>
+                        Sair
+                    </NavLink>
+                </NavItem>
+
+            }
         </>
     );
 

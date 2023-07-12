@@ -23,7 +23,7 @@ export default function ReportarCrime(props) {
   useEffect(() => {
     
 
-    if(verificarUser != "null"){
+    if(verificarUser){
       setUserData(true);
     } else{
       setUserData(false);
