@@ -16,14 +16,34 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
-
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import moment from 'moment';
 // reactstrap components
 import { Container, Row, Col, Table } from "reactstrap";
 
 // core components
 
 function SectionDark() {
+
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  const [historico, setHistorico] = useState([])
+
+  function buscarHistorico() {
+    const api = `http://localhost:8080/api/`;
+
+    axios.get(api+'dadosReport/user/'+userData.uid)
+    .then(reports => {
+      setHistorico(reports.data)
+    })
+  }
+
+  useEffect(() => {
+    buscarHistorico()
+
+  },[])
+  
+
   return (
     <>
     <br></br>
@@ -38,28 +58,24 @@ function SectionDark() {
             <th>Local</th>
             <th>Tipo</th>
             <th>Data</th>
-            <th>Horário</th>
+            <th>Vítimas</th>
           </tr>
         </thead>
         <tbody>
+          {historico.map(report=>{
+             const dataFormat = `${report.data[0]}-${report.data[1]}-${report.data[2]}`
+            return(
           <tr>
-            <th scope="row">Joana Bezerra</th>
-            <td>Estupro</td>
-            <td>20/01/2023</td>
-            <td>21h</td>
-          </tr>
-          <tr>
-            <th scope="row">Parque da Jaqueira</th>
-            <td>Assalto</td>
-            <td>22/04/2023</td>
-            <td>14h</td>
-          </tr>
-          <tr>
-            <th scope="row">IFPE Jaboatão</th>
-            <td>Tráfico</td>
-            <td>01/10/2021</td>
-            <td>20h</td>
-          </tr>
+              <th scope="row">{report.municipio}</th>
+              <td>{report.natureza}</td>
+              <td style={{ fontWeight: 500 }}>{moment(dataFormat).format('DD/MM/YYYY')}</td>
+              <td>{report.vitima}</td>
+           </tr>
+            )
+            
+
+          })}
+         
         </tbody>
       </Table>
             </Col>
