@@ -19,6 +19,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import Private from "./private/Private";
 
 // styles
 import "bootstrap/scss/bootstrap.scss";
@@ -43,13 +44,13 @@ root.render(
       <Route path="/index" render={(props) => <Index {...props} />} />
       <Route
         path="/historico"
-        render={(props) => <HistoricoReport {...props} />}
+        render={(props) => <Private> <HistoricoReport {...props} /> </Private>}
       />
 
       <Route path="/index" render={(props) => <Index {...props} />} />
       <Route
         path="/dados"
-        render={(props) => <SectionDadosCadastrado {...props} />}
+        render={(props) => <Private> <SectionDadosCadastrado {...props} /> </Private>}
       />
 
 
@@ -57,7 +58,7 @@ root.render(
 <Route path="/index" render={(props) => <Index {...props} />} />
       <Route
         path="/configurar"
-        render={(props) => <ConfigConta {...props} />}
+        render={(props) => <Private> <ConfigConta {...props} /> </Private>}
       />
 
 
@@ -75,7 +76,7 @@ root.render(
         render={(props) => <Listagem {...props} />}
       />
       <Route
-        path="/register-page"
+        path="/admin"
         render={(props) => <RegisterPage {...props} />}
       />
       
