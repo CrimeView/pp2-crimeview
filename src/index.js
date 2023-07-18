@@ -20,6 +20,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
 import Private from "./private/Private";
+import PrivateAdmin from "./private/PrivateAdmin";
 
 // styles
 import "bootstrap/scss/bootstrap.scss";
@@ -50,7 +51,7 @@ root.render(
       <Route path="/index" render={(props) => <Index {...props} />} />
       <Route
         path="/dados"
-        render={(props) => <Private> <SectionDadosCadastrado {...props} /> </Private>}
+        render={(props) => <PrivateAdmin> <SectionDadosCadastrado {...props} /> </PrivateAdmin>}
       />
 
 
