@@ -27,7 +27,8 @@ export default function NavAdmin() {
 
         <NavItem>
             <NavLink
-                href="/usuarios"
+                href="https://console.firebase.google.com/"
+                target="_blank"
             >
                 <i class="fa fa-users" aria-hidden="true"></i>
                 Lista de usuários
