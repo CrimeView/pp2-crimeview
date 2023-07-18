@@ -25,6 +25,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
 import { toast } from "react-toastify";
+import 'chart.js/auto';
 
 function SectionTabelaDados() {
   const [dados, setDados] = useState([]);
@@ -33,6 +34,37 @@ function SectionTabelaDados() {
   const [paginaAtual, setPaginaAtual] = useState(1);
   const registrosPorPagina = 10;
   const [selectedDataSource, setSelectedDataSource] = useState('dados'); // Fonte de dados selecionada ('dados' ou 'dadosReport')
+  const [chartData, setChartData] = useState({});
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Número de Vítimas'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Data'
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      },
+      title: {
+        display: true,
+        text: 'Municípios com mais vítimas',
+        font: {
+          size: 18}
+      }
+    },
+    filterMunicipios: true
+  };
 
   async function buscarDados() {
     const api = `http://localhost:8080/api/`;
@@ -101,6 +133,103 @@ function SectionTabelaDados() {
     }
   }
 
+  
+  
+   
+    //Gerar o gráfico
+    async function gerarGrafico() {
+      try {
+        const api = `http://localhost:8080/api/dadosReport`; 
+  
+        const response = await axios.get(api);
+        const dados = response.data;
+  
+        // Filtrar e ordenar os municípios com mais vítimas
+        const municipiosOrdenados = dados
+          .sort((a, b) => b.vitima - a.vitima)
+          .slice(0, 5) // Altere para exibir o número desejado de municípios com mais vítimas
+          .map(dado => dado.municipio);
+  
+        // Filtrar os dados dos municípios selecionados
+        const dadosFiltrados = dados.filter(dado => municipiosOrdenados.includes(dado.municipio));
+
+        //cores
+        const cores = [
+          "rgba(255, 0, 0, 0.5)",    // Vermelho claro
+          "rgba(0, 255, 0, 0.5)",    // Verde claro
+          "rgba(0, 0, 255, 0.5)",    // Azul claro
+          "rgba(255, 255, 0, 0.5)",  // Amarelo claro
+          "rgba(128, 0, 128, 0.5)"   // Roxo claro
+        ];
+
+
+        // Criar os datasets para o gráfico
+        const datasets = [];
+        for (let i = 0; i < municipiosOrdenados.length; i++) {
+        const municipio = municipiosOrdenados[i];
+        const vitimasPorMunicipio = dadosFiltrados
+          .filter(dado => dado.municipio === municipio)
+          .map(dado => dado.vitima);
+
+        datasets.push({
+          label: municipio,
+          data: vitimasPorMunicipio,
+          fill: false,
+          borderColor: cores[i % cores.length], 
+          backgroundColor: cores[i % cores.length]// Seleciona uma cor da lista de cores fixas
+        });
+      }
+
+        const chartData = {
+          labels: dadosFiltrados.map(dado => dado.data), 
+          datasets: datasets,
+        };
+  
+      setChartData(chartData);
+          
+      const chartWindow = window.open("", "_blank");
+      if (chartWindow) {
+        chartWindow.document.write(`
+          <html>
+            <head>
+              <title>Gráfico de Vítimas por Data</title>
+              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            </head>
+            <body>
+              <canvas id="chartCanvas"></canvas>
+              <script>
+                const ctx = document.getElementById('chartCanvas').getContext('2d');
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: ${JSON.stringify(chartData)},
+                  options: ${JSON.stringify(options)}
+                });
+              </script>
+            </body>
+          </html>
+        `);
+        chartWindow.document.close();
+      }
+      } catch (error) {
+        console.error("Erro ao buscar os dados do gráfico:", error);
+      }
+      
+    }
+
+    
+
+    {/*//gerar uma cor aleatória a cada chamada
+ const getRandomColor = () => {
+    const letters = "0123456789ABCDEF";
+    let color = "#";
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  };
+*/}
+
+
   return (
     <>
       <br />
@@ -121,7 +250,19 @@ function SectionTabelaDados() {
                       <option value="dadosReport">Dados Report</option>
                     </select>
                   </div><br />
+                
+                  
+                
                   <button className="btn" onClick={generatePDF}>Exportar PDF</button>
+                  <button className="btn" onClick={gerarGrafico}>
+                    Gerar Gráfico
+                  </button>
+
+                  {/*{Object.keys(chartData).length > 0 && (
+                    <Bar data={chartData} options={options}
+                     />
+                  )}*/}
+                  
                   <br />
                   <br />
                 </>
@@ -181,6 +322,6 @@ function SectionTabelaDados() {
       </div>
     </>
   );
-}
+                    }
 
 export default SectionTabelaDados;
