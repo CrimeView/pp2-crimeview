@@ -10,8 +10,8 @@ export default function NavAdmin() {
 
     async function logout(){
         signOut(auth);
-        localStorage.setItem("userData", null);
-        window.location.reload()
+        localStorage.clear();
+        window.location.reload();
     }
 
     return(
