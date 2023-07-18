@@ -55,7 +55,7 @@ function SectionLogin() {
       setTimeout(() => {
         setLogado("none");
         window.location.reload();
-      },3010);
+      },1000);
       
     }).catch(error => {
       toast.error("Usuário ou senha inválidos");
@@ -70,6 +70,10 @@ function SectionLogin() {
       setEmail("");
       setPasswd("");
       localStorage.setItem("userData", JSON.stringify(res));
+      setTimeout(() => {
+        setLogado("none");
+        window.location.reload();
+      },1000);
     }).catch(error => {
       if(error.code === "auth/email-already-in-use"){
         toast.error("Usuário já cadastrado!")

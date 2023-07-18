@@ -32,7 +32,7 @@ function SectionTabelaDados() {
   const [dadosReport, setDadosReport] = useState([]);
   const [loading, setLoading] = useState(true);
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const registrosPorPagina = 10;
+  const registrosPorPagina = 100;
   const [selectedDataSource, setSelectedDataSource] = useState('dados'); // Fonte de dados selecionada ('dados' ou 'dadosReport')
   const [chartData, setChartData] = useState({});
   const options = {

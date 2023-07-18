@@ -28,7 +28,7 @@ export default function NavUser() {
 
             <NavItem>
                 <NavLink
-                    href="/conta"
+                    href="/configurar"
                 >
                     <i class="fa fa-cogs" aria-hidden="true"></i>
                     Configurar Conta

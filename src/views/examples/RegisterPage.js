@@ -16,13 +16,18 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 // reactstrap components
 import { Button, Card, Form, Input, Container, Row, Col } from "reactstrap";
+import api from '../../ENDERECO_SERVIDOR';
+import { toast, ToastContainer } from "react-toastify";
+import IndexNavbar from "components/Navbars/IndexNavbar";
 
 // core components
 import ExamplesNavbar from "components/Navbars/ExamplesNavbar.js";
+import axios from "axios";
+import { Redirect } from "react-router-dom";
 
 function RegisterPage() {
   document.documentElement.classList.remove("nav-open");
@@ -32,9 +37,46 @@ function RegisterPage() {
       document.body.classList.remove("register-page");
     };
   });
+
+  const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [display,setDisplay] = useState("");
+  const user = JSON.parse(localStorage.getItem('userData'));
+
+  async function logar() {
+    let request = {
+      email: email,
+      senha: senha
+    }
+    await axios.post(api + '/admin/login', request)
+      .then(response => {
+        setEmail("");
+        setSenha("");
+        localStorage.setItem('userData', JSON.stringify(response.data));
+        setTimeout(() => {
+          window.location.reload()
+        }, 1000)
+      }).catch(error => {
+        toast.error("Usuário ou senha inválidos");
+      })
+  }
+
+  useEffect(() => {
+
+    if(user){
+      setDisplay("none");
+    } else{
+      setDisplay("block")
+    }
+
+  }, [])
+
   return (
     <>
-      <ExamplesNavbar />
+
+      <ToastContainer autoClose={3000} />
+      <IndexNavbar />
+
       <div
         className="page-header"
         style={{
@@ -42,66 +84,27 @@ function RegisterPage() {
         }}
       >
         <div className="filter" />
-        <Container>
+        <Container style={{display: `${display}`}}>
           <Row>
             <Col className="ml-auto mr-auto" lg="4">
               <Card className="card-register ml-auto mr-auto">
-                <h3 className="title mx-auto">Welcome</h3>
-                <div className="social-line text-center">
-                  <Button
-                    className="btn-neutral btn-just-icon mr-1"
-                    color="facebook"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <i className="fa fa-facebook-square" />
-                  </Button>
-                  <Button
-                    className="btn-neutral btn-just-icon mr-1"
-                    color="google"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <i className="fa fa-google-plus" />
-                  </Button>
-                  <Button
-                    className="btn-neutral btn-just-icon"
-                    color="twitter"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    <i className="fa fa-twitter" />
-                  </Button>
-                </div>
+                <h3 className="title mx-auto" style={{ color: 'black', fontWeight: 600 }}>Acesso restrito</h3>
+
                 <Form className="register-form">
-                  <label>Email</label>
-                  <Input placeholder="Email" type="text" />
-                  <label>Password</label>
-                  <Input placeholder="Password" type="password" />
-                  <Button block className="btn-round" color="danger">
-                    Register
+                  <label>E-mail</label>
+                  <Input placeholder="Email" type="text" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <label>Senha</label>
+                  <Input placeholder="Password" type="password" value={senha} onChange={e => setSenha(e.target.value)} />
+                  <Button block className="btn-round" color="danger" onClick={() => logar()}>
+                    Entrar
                   </Button>
                 </Form>
-                <div className="forgot">
-                  <Button
-                    className="btn-link"
-                    color="danger"
-                    href="#pablo"
-                    onClick={(e) => e.preventDefault()}
-                  >
-                    Forgot password?
-                  </Button>
-                </div>
+
               </Card>
             </Col>
           </Row>
         </Container>
-        <div className="footer register-footer text-center">
-          <h6>
-            © {new Date().getFullYear()}, made with{" "}
-            <i className="fa fa-heart heart" /> by Creative Tim
-          </h6>
-        </div>
+
       </div>
     </>
   );
