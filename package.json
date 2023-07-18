@@ -4,6 +4,7 @@
   "dependencies": {
     "@react-google-maps/api": "^2.19.0",
     "axios": "^1.4.0",
+    "chart.js": "^4.3.0",
     "classnames": "2.3.1",
     "date-fns": "^2.30.0",
     "firebase": "^9.22.0",
@@ -17,7 +18,8 @@
     "moment": "^2.29.4",
     "nouislider": "14.5.0",
     "npm": "^9.7.2",
-    "react": "18.2.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
     "react-datetime": "3.1.1",
     "react-dom": "18.2.0",
     "react-icons": "^4.10.1",
@@ -63,7 +65,6 @@
     "gulp-append-prepend": "1.0.9"
   },
   "peerDependencies": {
-    "react": ">=16.0.0",
     "react-dom": ">=16.0.0"
   },
   "description": "Paper Kit React is a free Bootstrap 4, React, React Hooks and Reactstrap UI Kit with pale colors, beautiful typography and thoughtful drawings. We've created it having paper and drawings in mind.",
